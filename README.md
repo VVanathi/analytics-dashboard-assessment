@@ -1,5 +1,11 @@
 # MapUp - Analytics Dashboard Assessment
+<img width="2858" height="1235" alt="image" src="https://github.com/user-attachments/assets/c7e937d4-faeb-468f-b231-abc7e86121aa" />
 
+<img width="2855" height="1441" alt="image" src="https://github.com/user-attachments/assets/95a23c19-6628-4d07-9691-6fe1d0474f71" />
+<img width="2850" height="1425" alt="image" src="https://github.com/user-attachments/assets/6af62eea-aba0-41fc-88a5-e896883f86ac" />
+
+## Live Dashboard
+[Click here to view the dashboard](https://vvanathi.github.io/analytics-dashboard-assessment/vanathi-frontendDeveloper/code/index.html)
 ## Overview
 
 The objective of this assessment is to analyze the provided Electric Vehicle (EV) population data and create a frontend dashboard that visualizes key insights about the dataset. This repository contains the necessary data and instructions for you to demonstrate your analytical and dashboard creation skills. Feel free to use any tech stack you want to create the dashboard.
