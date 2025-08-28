@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Population Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Papa Parse for CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- AOS Animation Library -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="header" data-aos="fade-down">
+            <div class="d-flex gap-2 flex-wrap">
+                <div class="w-sm-100 align-items-center ">
+                <img src="../assets/ev-car.png" class="ev-car_img"/>
+                </div>
+            <div>
+            <h1><i class="bi bi-lightning-charge"></i> Electric Vehicle Population Dashboard</h1>
+            <p>Comprehensive analysis of Electric Vehicle adoption, trends, and insights</p>
+            </div>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">
+                <h3>Loading EV Data</h3>
+                <p>Analyzing electric vehicle population and generating insights...</p>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard" style="display: none;">
+            <!-- Key Metrics -->
+            <div class="row g-4 mb-4" data-aos="fade-up">
+                <div class="col-xl-3 col-md-6">
+                    <div class="glass-card metric-card">
+                        <div class="metric-value" id="totalVehicles">0</div>
+                        <div class="metric-label"><i class="bi bi-car-front"></i> Total EVs</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="glass-card metric-card">
+                        <div class="metric-value" id="avgRange">0</div>
+                        <div class="metric-label"><i class="bi bi-speedometer2"></i> Avg Range (miles)</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="glass-card metric-card">
+                        <div class="metric-value" id="topMake">-</div>
+                        <div class="metric-label"><i class="bi bi-trophy"></i> Top Manufacturer</div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="glass-card metric-card">
+                        <div class="metric-value" id="bevPercentage">0%</div>
+                        <div class="metric-label"><i class="bi bi-battery-charging"></i> BEV Percentage</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="glass-card filters-section" data-aos="fade-up" data-aos-delay="100">
+                <h3 class="filters-title">
+                    <i class="bi bi-funnel"></i> Filters & Controls
+                    <div class="filter-indicator" id="filterIndicator">!</div>
+                </h3>
+                
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6 form-group">
+                        <label class="form-label text-white-50"><i class="bi bi-building"></i> Manufacturer</label>
+                        <select class="form-select dropdown-toggle form-control" id="makeFilter">
+                            <option value="">All Makes</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label text-white-50"><i class="bi bi-ev-station"></i> Vehicle Type</label>
+                        <select class="form-select" id="typeFilter">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label text-white-50"><i class="bi bi-calendar"></i> Model Year</label>
+                        <select class="form-select" id="yearFilter">
+                            <option value="">All Years</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label text-white-50"><i class="bi bi-geo-alt"></i> County</label>
+                        <select class="form-select" id="countyFilter">
+                            <option value="">All Counties</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center btn-group-custom">
+                    <button class="btn btn-apply" id="applyFilters">
+                        <i class="bi bi-check-circle"></i> Apply Filters
+                    </button>
+                    <button class="btn btn-reset" id="resetFilters">
+                        <i class="bi bi-arrow-clockwise"></i> Reset All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="row g-4 mb-4">
+                <div class="col-xl-6 col-lg-6">
+                    <div class="glass-card chart-container" data-aos="fade-up" data-aos-delay="200">
+                        <h4 class="chart-title"><i class="bi bi-graph-up"></i> EV Adoption by Year</h4>
+                        <div class="canvas-wrapper">
+                            <canvas id="yearChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="glass-card chart-container" data-aos="fade-up" data-aos-delay="250">
+                        <h4 class="chart-title"><i class="bi bi-bar-chart"></i> Top Manufacturers</h4>
+                        <div class="canvas-wrapper">
+                            <canvas id="makeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="glass-card chart-container" data-aos="fade-up" data-aos-delay="300">
+                        <h4 class="chart-title"><i class="bi bi-pie-chart"></i> Vehicle Type Distribution</h4>
+                        <div class="canvas-wrapper">
+                            <canvas id="typeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="glass-card chart-container" data-aos="fade-up" data-aos-delay="350">
+                        <h4 class="chart-title"><i class="bi bi-speedometer"></i> Electric Range Distribution</h4>
+                        <div class="canvas-wrapper">
+                            <canvas id="rangeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="glass-card chart-container" data-aos="fade-up" data-aos-delay="400">
+                        <h4 class="chart-title"><i class="bi bi-map"></i> Geographic Distribution</h4>
+                        <div class="canvas-wrapper">
+                            <canvas id="geoChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="glass-card chart-container" data-aos="fade-up" data-aos-delay="450">
+                        <h4 class="chart-title"><i class="bi bi-award"></i> CAFV Eligibility Status</h4>
+                        <div class="canvas-wrapper">
+                            <canvas id="cafvChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="glass-card table-container" data-aos="fade-up" data-aos-delay="500">
+                <h3 class="chart-title"><i class="bi bi-table"></i> Vehicle Data Sample</h3>
+                <div style="max-height: 500px; overflow-y: auto;overflow: auto; border-radius: 10px;" class="my-scroll-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-building"></i> Make</th>
+                                <th><i class="bi bi-car-front"></i> Model</th>
+                                <th><i class="bi bi-calendar"></i> Year</th>
+                                <th><i class="bi bi-ev-station"></i> Type</th>
+                                <th><i class="bi bi-speedometer2"></i> Range</th>
+                                <th><i class="bi bi-geo-alt"></i> County</th>
+                                <th><i class="bi bi-house"></i> City</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+   <script src="main.js"></script>
+</body>
+</html>
